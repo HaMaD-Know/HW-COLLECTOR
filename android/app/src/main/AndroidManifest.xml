@@ -44,7 +44,8 @@
 
     <!-- Permissions -->
 
-    <!-- Needed only to reach the optional AI identification service. -->
+    <!-- The app makes no network requests. INTERNET stays from the Capacitor template
+         because Capacitor's live reload needs it during development. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Photos are taken through the system camera app and picked through the Photo Picker,
          so no camera or storage permission is requested. A camera is optional. -->

@@ -8,8 +8,6 @@ export default tseslint.config(
       'android/**',
       'ios/**',
       'node_modules/**',
-      'backend/node_modules/**',
-      'backend/dist/**',
       'public/**',
       'coverage/**',
       'release/**',

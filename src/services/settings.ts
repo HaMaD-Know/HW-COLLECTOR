@@ -6,17 +6,11 @@ export type ThemePreference = 'dark' | 'light' | 'system';
 export interface AppSettings {
   currency: Currency;
   theme: ThemePreference;
-  /** User override for the identification proxy URL; empty = use the build default. */
-  aiProxyUrl: string;
-  /** User has agreed that photos may be sent to the external AI service. */
-  aiConsent: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
   currency: 'USD',
   theme: 'dark',
-  aiProxyUrl: '',
-  aiConsent: false,
 };
 
 const KEY = 'settings.v1';
@@ -57,7 +51,5 @@ export function sanitize(raw: Partial<Record<keyof AppSettings, unknown>>): AppS
   return {
     currency: CURRENCIES.includes(raw.currency as Currency) ? (raw.currency as Currency) : DEFAULT_SETTINGS.currency,
     theme: raw.theme === 'light' || raw.theme === 'system' ? raw.theme : 'dark',
-    aiProxyUrl: typeof raw.aiProxyUrl === 'string' ? raw.aiProxyUrl.trim().slice(0, 300) : '',
-    aiConsent: raw.aiConsent === true,
   };
 }

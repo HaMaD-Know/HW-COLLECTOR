@@ -54,7 +54,6 @@ export async function loadDemoCars(cars: CarRepository, images: ImageStore): Pro
       series: demo.series,
       releaseYear: demo.year,
       notes: 'Demo record. Remove all demo cars in Settings → Demo data.',
-      nameSource: 'manual',
       isSample: true,
     };
     // Stable ids make loading twice a no-op instead of creating duplicates.

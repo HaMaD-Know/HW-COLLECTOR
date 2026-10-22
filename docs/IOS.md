@@ -11,6 +11,7 @@ Manager** (no CocoaPods), so a macOS GitHub Actions runner can build it directly
 | Build | Apple account | Secrets | Installable on | Workflow |
 | --- | --- | --- | --- | --- |
 | **Simulator build** (unsigned) | none | none | iOS Simulator on a Mac only. **Not** on an iPhone. | runs on every push / PR |
+| **Unsigned IPA** | none to build; a free Apple ID to sideload | none | your own iPhone, after a sideloading tool signs it (free Apple ID: expires after 7 days) | runs on every push to `main` |
 | **Signed IPA – development** (`debugging`) | Apple Developer Program | certificate + development profile | the iPhones whose UDIDs are in the profile | manual run |
 | **Signed IPA – ad hoc** (`release-testing`) | Apple Developer Program | distribution certificate + ad hoc profile | up to 100 registered devices per device type per year | manual run |
 | **TestFlight** (`app-store-connect`) | Apple Developer Program + App Store Connect app record | distribution certificate + App Store profile + API key | testers you invite in TestFlight | manual run with `upload_to_testflight` |
@@ -28,6 +29,23 @@ cannot be used from CI.
 Push to `main` or open a PR. **Actions → iOS → Simulator build (unsigned)** compiles the app for the
 simulator. This proves the iOS project builds with the current code. The artifact
 `hw-collector-ios-simulator` contains `App.app`, which can be dragged onto a running Simulator on any Mac.
+
+## 1b. Unsigned IPA + sideloading (no paid account)
+
+Every push to `main` also runs **Unsigned IPA (for sideloading)**, which uploads `hw-collector-ios-unsigned-ipa`
+containing `HWCollector-unsigned.ipa`. iOS refuses to install an unsigned app directly, but a sideloading tool
+can sign it with your own Apple ID and install it from Windows:
+
+1. Install **iTunes** (or Apple Devices) from Microsoft Store/Apple so Windows can talk to the iPhone, and
+   **Sideloadly** (<https://sideloadly.io>).
+2. Download the artifact from the GitHub run page (**Actions → iOS → latest run → Artifacts**) and unzip it.
+3. Connect the iPhone by USB, open Sideloadly, drop in `HWCollector-unsigned.ipa`, enter your Apple ID, Start.
+4. On the iPhone: **Settings → General → VPN & Device Management →** trust your Apple ID; on iOS 16+ also turn
+   on **Settings → Privacy & Security → Developer Mode** and restart.
+
+Limits with a free Apple ID (Apple's rules, not the app's): the app stops opening after **7 days** and must be
+re-sideloaded (your data stays as long as you re-install over it, not after deleting it); at most 3 sideloaded
+apps per device. A paid developer account extends this to one year — or use the signed-IPA route below.
 
 ## 2. One-time Apple setup
 
@@ -75,11 +93,9 @@ For TestFlight also:
 
 | Secret | How to get it |
 | --- | --- |
-| `APPSTORE_API_KEY_ID` | App Store Connect → Users and Access → Integrations → App Store Connect API → generate a key (role *App Manager*) |
+| `APPSTORE_API_KEY_ID` | App Store Connect → Users and Access → Integrations → App Store Connect API → generate a key (role *App Manager*). This is Apple's upload credential for CI, used only by the workflow — the app itself has no keys. |
 | `APPSTORE_API_ISSUER_ID` | shown above the key list |
 | `APPSTORE_API_PRIVATE_KEY` | full contents of the downloaded `AuthKey_XXXX.p8` (it can be downloaded only once) |
-
-Optional repository **variable** (not secret): `VITE_AI_PROXY_URL`.
 
 Secrets are only exposed to the steps that use them, are masked in logs, the temporary keychain uses a
 random password, and the certificate, profile and API key files are deleted at the end of the job. Secrets are
@@ -111,7 +127,7 @@ The build number is the GitHub run number, so each upload is unique. Bump the ma
 ## 6. App Store release
 
 Done manually in App Store Connect: screenshots, description, privacy "nutrition label" (see
-[PRIVACY.md](PRIVACY.md) — photos are sent to a third-party AI only when the user taps Identify), age rating,
+[PRIVACY.md](PRIVACY.md) — the app collects no data), age rating,
 select the TestFlight build, **Submit for Review**. Nothing in this repository submits automatically.
 
 Keep the trademark disclaimer: the app must not look like an official Mattel product.

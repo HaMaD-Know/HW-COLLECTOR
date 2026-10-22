@@ -872,7 +872,7 @@ img {
   color: var(--text);
 }
 
-/* ---------- Add car / AI ---------- */
+/* ---------- Add car ---------- */
 .capture {
   position: relative;
   border-radius: var(--radius-lg);
@@ -990,68 +990,6 @@ img {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
   }
-}
-
-.ai-panel__status {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-  margin: -6px 0 var(--space-3);
-}
-
-.ai-result {
-  display: flex;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-}
-
-.ai-result__thumb {
-  width: 96px;
-  flex: none;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-sm);
-  object-fit: cover;
-}
-
-.ai-result__label {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-
-.ai-result__name {
-  margin: 2px 0 6px;
-  font-size: var(--fs-lg);
-  font-weight: 750;
-  overflow-wrap: anywhere;
-}
-
-.ai-result__facts {
-  margin-top: var(--space-2);
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-
-.alt-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-
-.alt-list button {
-  min-height: 36px;
-  padding: 0 12px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  font-size: var(--fs-sm);
-  cursor: pointer;
 }
 
 .notice {
@@ -1557,22 +1495,6 @@ img {
 .prose ul {
   margin: 0 0 var(--space-2);
   padding-left: 1.2em;
-}
-
-.status-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--text-faint);
-}
-
-.status-dot--ok {
-  background: var(--success);
-}
-
-.status-dot--off {
-  background: var(--warning);
 }
 
 .disclaimer {

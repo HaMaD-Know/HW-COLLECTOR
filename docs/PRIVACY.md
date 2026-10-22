@@ -1,36 +1,32 @@
 # Privacy
 
-HW Collector is a local-first app. This page describes what the app as shipped in this repository does.
-If you publish it, adapt this text into your store privacy policy and keep it accurate for your deployment.
+HW Collector is an offline, local-first app. This page describes what the app as shipped in this repository
+does. If you publish it, adapt this text into your store privacy policy and keep it accurate.
+
+## Summary
+
+- No account, no sign-in, no API keys.
+- No analytics, advertising, crash reporting or tracking SDKs.
+- No online services: the app makes no network requests. Everything works in airplane mode.
+- Your data leaves the device only in backup files that you export and share yourself.
 
 ## Data stored on the device
 
 | Data | Where | Leaves the device? |
 | --- | --- | --- |
 | Car and wishlist records | SQLite database in app-private storage | Only in backup files you export |
-| Photos you add | App-private storage (`images/` in the app's data directory) | Only when you tap **Identify** (that one photo) or export a backup |
-| Settings (currency, theme, AI URL, consent) | Capacitor Preferences (Android SharedPreferences / iOS UserDefaults) | No |
+| Photos you add | App-private storage (`images/` in the app's data directory) | Only in backup files you export |
+| Settings (currency, theme) | Capacitor Preferences (Android SharedPreferences / iOS UserDefaults) | No |
 
-There is no account, no analytics, no advertising SDK, no crash reporting and no cloud sync.
-
-## AI identification
-
-Only when you tap **Identify** (and after you agree to the one-time consent prompt):
-
-1. The selected photo, resized to at most 1600 px and re-encoded as JPEG (which drops most EXIF metadata such
-   as GPS location), is sent over HTTPS to the identification service configured in the app.
-2. That service forwards the photo to Anthropic's API and returns a text suggestion.
-3. The service in `backend/` does not store photos and logs only timing and status (no image data, no keys).
-   Anthropic processes API requests under its commercial terms and data-retention policy.
-
-Revoke consent in **Settings → AI identification**; you will be asked again before any further upload.
-You can always skip identification and type the name.
+Photos are resized to at most 1600 px and re-encoded as JPEG when saved, which drops most EXIF metadata such
+as GPS location.
 
 ## Permissions
 
 - **Camera** (iOS prompt; Android uses the system camera app): only when you tap *Take photo*.
 - **Photos** (iOS prompt; Android uses the system Photo Picker, no permission): only when you choose a photo.
-- **Internet**: only for the optional identification service.
+- **Internet** (Android manifest only): kept from the Capacitor template for development live-reload. The app
+  itself never connects to the internet.
 
 ## Deleting data
 
@@ -41,6 +37,6 @@ You can always skip identification and type the name.
 
 ## App Store / Play Store declarations (for publishers)
 
-- Data collected by the developer: **none**, if you operate the proxy without logging.
-- Data shared with a third party: **photos**, only on user action, for app functionality (identification),
-  not linked to identity, not used for tracking.
+- Data collected: **none**.
+- Data shared with third parties: **none**.
+- Tracking: **no**.

@@ -4,7 +4,7 @@
 
 | Tool | Version | Notes |
 | --- | --- | --- |
-| Node.js | 22.18+ (24 LTS recommended) | <https://nodejs.org>. The backend runs `.ts` files directly, which needs 22.18+. |
+| Node.js | 22+ (24 LTS recommended) | <https://nodejs.org> |
 | Git | any recent | <https://git-scm.com> |
 | Android Studio | current stable | Includes the Android SDK. Install SDK Platform 36 and Build-Tools from *SDK Manager*. |
 | JDK | 21 | Capacitor 8 builds need Java 21. Android Studio's bundled JBR 21 works; or install Temurin 21. |
@@ -47,7 +47,6 @@ Opening the `android` folder in Android Studio creates this file automatically.
 ```powershell
 cd "HOT WHEELS COLLECTOR"
 npm.cmd install
-npm.cmd install --prefix backend     # only needed if you run the AI proxy
 ```
 
 `postinstall` copies `sql-wasm.wasm` into `public/assets` for the browser preview.

@@ -42,15 +42,13 @@ describe('CarRepository CRUD', () => {
       series: 'HW Exotics',
       releaseYear: 2024,
       purchasePriceCents: 125,
-      nameSource: 'ai-confirmed',
-      aiSuggestedName: 'Ford GT-40',
     });
     expect(car.name).toBe('Ford GT-40');
     expect(car.createdAt).toBe(clock);
     expect(await repo.get(car.id)).toEqual(car);
 
     clock += 5000;
-    const edited = await repo.update(car.id, { name: 'Ford GT40 MkII', nameSource: 'ai-corrected', notes: 'Le Mans' });
+    const edited = await repo.update(car.id, { name: 'Ford GT40 MkII', notes: 'Le Mans' });
     expect(edited.name).toBe('Ford GT40 MkII');
     expect(edited.createdAt).toBe(car.createdAt);
     expect(edited.updatedAt).toBe(clock);
@@ -76,12 +74,6 @@ describe('CarRepository CRUD', () => {
     await expect(repo.create({ name: 'X', releaseYear: 1800 })).rejects.toThrow(/year/);
     await expect(repo.create({ name: 'X', purchasePriceCents: -5 })).rejects.toThrow(/amount/);
     await expect(repo.create({ name: 'X', imagePath: '../../etc/passwd' })).rejects.toThrow(/image/);
-  });
-
-  it('does not treat an AI status as confirmed without the AI suggestion', async () => {
-    const repo = new CarRepository(await createTestDb());
-    const car = await repo.create({ name: 'Mystery', nameSource: 'ai-confirmed' });
-    expect(car.nameSource).toBe('manual');
   });
 
   it('prevents duplicate saves when the same id is submitted twice', async () => {
@@ -121,5 +113,36 @@ describe('persistence', () => {
     await runMigrations(reopened); // startup path runs migrations again
     const again = await new CarRepository(reopened).get(car.id);
     expect(again).toEqual(car);
+  });
+});
+
+describe('older installs', () => {
+  it('keeps working on a database created with the earlier AI columns', async () => {
+    const initSqlJs = (await import('sql.js')).default;
+    const { SqlJsDriver } = await import('./helpers/sqljs-driver');
+    const SQL = await initSqlJs();
+    const db = new SqlJsDriver(new SQL.Database());
+    // Schema shipped in the first debug build (before AI identification was removed).
+    await db.exec(`
+      CREATE TABLE cars (
+        id TEXT PRIMARY KEY NOT NULL, name TEXT NOT NULL, image_path TEXT,
+        created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, manufacturer TEXT, model TEXT,
+        series TEXT, color TEXT, release_year INTEGER, purchase_year INTEGER, condition TEXT,
+        packaging TEXT, purchase_price_cents INTEGER, estimated_value_cents INTEGER,
+        purchase_location TEXT, notes TEXT, ai_suggested_name TEXT,
+        name_source TEXT NOT NULL DEFAULT 'manual',
+        is_wishlisted INTEGER NOT NULL DEFAULT 0, is_sample INTEGER NOT NULL DEFAULT 0
+      );
+      CREATE TABLE schema_version (version INTEGER NOT NULL);
+      INSERT INTO schema_version (version) VALUES (1);
+      INSERT INTO cars (id, name, created_at, updated_at, name_source, ai_suggested_name)
+        VALUES ('old-car-0001', 'Old Car', 1, 1, 'ai-confirmed', 'Old Car');
+    `);
+    await runMigrations(db);
+    const repo = new CarRepository(db);
+    expect((await repo.get('old-car-0001'))?.name).toBe('Old Car');
+    const added = await repo.create({ name: 'New Car' });
+    expect((await repo.update(added.id, { notes: 'edited' })).notes).toBe('edited');
+    expect(await repo.count()).toBe(2);
   });
 });

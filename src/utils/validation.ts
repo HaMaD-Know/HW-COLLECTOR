@@ -1,10 +1,4 @@
-import {
-  CONDITIONS,
-  NAME_SOURCES,
-  PACKAGING_STATUSES,
-  type CarInput,
-  type WishlistInput,
-} from '../types/models';
+import { CONDITIONS, PACKAGING_STATUSES, type CarInput, type WishlistInput } from '../types/models';
 
 export const LIMITS = {
   name: 120,
@@ -86,8 +80,6 @@ export function validateCarInput(input: Partial<CarInput>, now = new Date()): Va
     estimatedValueCents: checkCents(input.estimatedValueCents, 'estimatedValueCents', errors),
     purchaseLocation: cleanText(input.purchaseLocation, LIMITS.shortText),
     notes: cleanMultiline(input.notes, LIMITS.notes),
-    aiSuggestedName: cleanText(input.aiSuggestedName, LIMITS.name),
-    nameSource: oneOf(NAME_SOURCES, input.nameSource) ?? 'manual',
     isWishlisted: input.isWishlisted === true,
     isSample: input.isSample === true,
   };
@@ -95,9 +87,6 @@ export function validateCarInput(input: Partial<CarInput>, now = new Date()): Va
   if (value.purchaseYear != null && value.purchaseYear > now.getFullYear()) {
     errors.purchaseYear = 'Purchase year cannot be in the future.';
   }
-  // An AI status without the AI's suggestion would be an unverifiable claim.
-  if (value.nameSource !== 'manual' && !value.aiSuggestedName) value.nameSource = 'manual';
-
   return { ok: Object.keys(errors).length === 0, value, errors };
 }
 

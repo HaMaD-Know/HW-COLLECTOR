@@ -33,8 +33,6 @@ export const MIGRATIONS: Migration[] = [
         estimated_value_cents INTEGER,
         purchase_location TEXT,
         notes TEXT,
-        ai_suggested_name TEXT,
-        name_source TEXT NOT NULL DEFAULT 'manual',
         is_wishlisted INTEGER NOT NULL DEFAULT 0,
         is_sample INTEGER NOT NULL DEFAULT 0
       );

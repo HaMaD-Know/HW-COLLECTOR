@@ -37,7 +37,7 @@ function errorCode(error: unknown): string {
 /**
  * Opens the camera or the photo library. Returns null if the user cancels.
  * The result is re-encoded as a JPEG of at most 1600px on its longest edge, so
- * stored files and AI uploads stay small and the temporary picker file is not needed.
+ * stored files and backups stay small and the temporary picker file is not needed.
  */
 export async function pickPhoto(source: 'camera' | 'gallery'): Promise<PickedPhoto | null> {
   let media: MediaResult | undefined;

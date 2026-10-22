@@ -1,4 +1,4 @@
-import { Car, CarFront, EllipsisVertical, Heart, Layers, Pencil, Sparkles, Tag, Trash2 } from 'lucide';
+import { Car, CarFront, EllipsisVertical, Heart, Layers, Pencil, Tag, Trash2 } from 'lucide';
 import type { AppContext } from '../app/context';
 import { carMeta } from '../components/car-card';
 import { carImage } from '../components/car-image';
@@ -10,7 +10,6 @@ import type { Screen } from '../navigation/router';
 import {
   colorSwatch,
   CONDITION_LABELS,
-  NAME_SOURCE_LABELS,
   PACKAGING_LABELS,
   type CarRecord,
 } from '../types/models';
@@ -83,8 +82,6 @@ export function carDetailScreen(ctx: AppContext, id: string): Screen {
     add('Bought at', car.purchaseLocation);
     add('Date added', formatDate(car.createdAt));
     if (car.updatedAt - car.createdAt > 60_000) add('Last edited', formatDate(car.updatedAt));
-    add('Name source', NAME_SOURCE_LABELS[car.nameSource]);
-    if (car.nameSource === 'ai-corrected') add('AI had suggested', car.aiSuggestedName);
     const missing = [car.series, car.color, car.releaseYear, car.condition, car.packaging].filter((v) => v == null).length;
 
     const recent = (await ctx.cars.recent(7)).filter((c) => c.id !== car.id).slice(0, 6);
@@ -98,7 +95,6 @@ export function carDetailScreen(ctx: AppContext, id: string): Screen {
         'div',
         { class: 'detail-chips' },
         car.series ? chip(car.series, 'orange', Layers) : null,
-        car.nameSource !== 'manual' ? chip(car.nameSource === 'ai-confirmed' ? 'AI confirmed' : 'AI corrected', 'success', Sparkles) : null,
         car.isWishlisted ? chip('Wishlist flag', 'warning', Heart) : null,
         car.isSample ? chip('Demo record', 'demo') : null,
       ),

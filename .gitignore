@@ -1,10 +1,8 @@
 # Dependencies
 node_modules/
-backend/node_modules/
 
 # Builds
 dist/
-backend/dist/
 release/
 coverage/
 *.zip
@@ -12,9 +10,6 @@ coverage/
 # Environment and secrets — never commit these
 .env
 .env.*
-!.env.example
-backend/.env
-!backend/.env.example
 *.keystore
 *.jks
 *.p12

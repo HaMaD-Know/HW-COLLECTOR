@@ -41,8 +41,6 @@ jobs:
         run: npm ci
 
       - name: Build web app and sync Android project
-        env:
-          VITE_AI_PROXY_URL: ${{ vars.VITE_AI_PROXY_URL }}
         run: |
           npm run build
           npx cap sync android

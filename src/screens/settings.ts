@@ -1,25 +1,12 @@
-import {
-  Brush,
-  Database,
-  Download,
-  FlaskConical,
-  Info,
-  RefreshCw,
-  ShieldCheck,
-  Sparkles,
-  Trash2,
-  TriangleAlert,
-  Upload,
-} from 'lucide';
-import { APP_VERSION, resolveProxyUrl, type AppContext } from '../app/context';
+import { Brush, Database, Download, FlaskConical, Info, ShieldCheck, Trash2, TriangleAlert, Upload } from 'lucide';
+import { APP_VERSION, type AppContext } from '../app/context';
 import { h, icon } from '../components/dom';
 import { confirmDialog, infoDialog, toast } from '../components/feedback';
 import { topBar } from '../components/nav';
-import { button, setBusy, textField } from '../components/ui';
+import { button, setBusy } from '../components/ui';
 import type { Screen } from '../navigation/router';
 import { BackupValidationError, buildBackup, importBackup, validateBackup } from '../services/export-import/backup';
 import { backupFileName, deliverBackup, pickBackupFile } from '../services/export-import/file-transfer';
-import { normalizeProxyUrl } from '../services/identification/proxy-provider';
 import { loadDemoCars } from '../services/sample-data';
 import type { ThemePreference } from '../services/settings';
 import { CURRENCIES, pluralize, type Currency } from '../utils/format';
@@ -66,72 +53,6 @@ export function settingsScreen(ctx: AppContext): Screen {
     ctx.events.emit('settings-changed');
     toast('Currency updated. Existing amounts are not converted.', 'info');
   });
-
-  // ---------- AI ----------
-  const statusDot = h('span', { class: 'status-dot' });
-  const statusText = h('span', null, 'Checking…');
-  const proxy = textField('Identification service URL', {
-    value: settings.aiProxyUrl,
-    placeholder: import.meta.env.VITE_AI_PROXY_URL || 'https://your-proxy.example.com',
-    type: 'url',
-    hint: 'The URL of your own deployed proxy (see docs/AI_SETUP.md). Leave empty to use the build default. Never paste a provider API key here.',
-  });
-
-  async function checkStatus(): Promise<void> {
-    statusDot.className = 'status-dot';
-    statusText.textContent = 'Checking…';
-    const configured = resolveProxyUrl(ctx.settings.get().aiProxyUrl);
-    if (!configured) {
-      statusDot.classList.add('status-dot--off');
-      statusText.textContent = 'Not configured — manual entry only.';
-      return;
-    }
-    const status = await ctx.identifier().status();
-    statusDot.classList.add(status.configured ? 'status-dot--ok' : 'status-dot--off');
-    statusText.textContent = status.description;
-  }
-
-  const saveProxy = button({
-    label: 'Save and test',
-    variant: 'outline',
-    small: true,
-    icon: RefreshCw,
-    onClick: async () => {
-      const raw = proxy.control.value.trim();
-      if (raw && !normalizeProxyUrl(raw)) {
-        proxy.setError('Enter a full URL starting with https://');
-        return;
-      }
-      if (/sk-ant-|api[_-]?key/i.test(raw)) {
-        proxy.setError('That looks like an API key. Keys belong on the server only.');
-        return;
-      }
-      proxy.setError(null);
-      await ctx.settings.update({ aiProxyUrl: raw });
-      ctx.events.emit('settings-changed');
-      await checkStatus();
-    },
-  });
-
-  const consentText = h('span');
-  const consentBtn = button({
-    label: 'Revoke',
-    variant: 'ghost',
-    small: true,
-    onClick: async () => {
-      await ctx.settings.update({ aiConsent: false });
-      renderConsent();
-      toast('You will be asked again before any photo is sent.', 'info');
-    },
-  });
-  function renderConsent(): void {
-    const given = ctx.settings.get().aiConsent;
-    consentText.textContent = given
-      ? 'You agreed that photos you choose to identify are sent to the AI service.'
-      : 'You will be asked before the first photo is sent.';
-    consentBtn.hidden = !given;
-  }
-  renderConsent();
 
   // ---------- Backup ----------
   const exportBtn = button({ label: 'Export', variant: 'outline', small: true, icon: Download });
@@ -283,13 +204,6 @@ export function settingsScreen(ctx: AppContext): Screen {
       settingRow('Currency', 'Used for purchase prices and your estimates.', currency),
     ),
     panel(
-      Sparkles,
-      'AI identification',
-      h('div', { class: 'setting', style: 'padding-top:0' }, h('div', { class: 'setting__text' }, h('strong', null, 'Status'), h('span', { style: 'display:flex;gap:8px;align-items:center' }, statusDot, statusText))),
-      h('div', { style: 'padding-top:12px' }, proxy.root, saveProxy),
-      settingRow('Photo upload consent', consentText, consentBtn),
-    ),
-    panel(
       Database,
       'Backup & restore',
       h(
@@ -312,13 +226,8 @@ export function settingsScreen(ctx: AppContext): Screen {
       h(
         'div',
         { class: 'prose' },
-        h('p', null, 'No account, no tracking, no analytics. Records and photos stay in this app’s private storage on your device.'),
-        h(
-          'p',
-          null,
-          'A photo leaves the device only when you tap Identify: it is sent to the identification service configured for this app, which forwards it to the AI provider (Anthropic) and returns a suggestion. The service does not store photos.',
-        ),
-        h('p', null, 'Backups you export are plain files you control. See docs/PRIVACY.md for details.'),
+        h('p', null, 'No account, no tracking, no analytics and no online services. The app works fully offline.'),
+        h('p', null, 'Your records and photos stay in this app’s private storage on your device. They only leave it in backup files you export yourself.'),
       ),
     ),
     panel(TriangleAlert, 'Danger zone', settingRow('Clear collection', 'Delete all cars, wishlist entries and photos.', clearBtn)),
@@ -329,6 +238,5 @@ export function settingsScreen(ctx: AppContext): Screen {
     ),
   );
 
-  void checkStatus();
   return { el };
 }

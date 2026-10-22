@@ -139,7 +139,7 @@ export function collectionScreen(ctx: AppContext): Screen {
           emptyState({
             icon: Car,
             title: 'Your garage is empty',
-            message: 'Add your first car with a photo. AI can suggest the name, or you can type it yourself.',
+            message: 'Add your first car: take a photo, type its name and any details you know.',
             action: button({
               label: 'Add your first car',
               variant: 'primary',

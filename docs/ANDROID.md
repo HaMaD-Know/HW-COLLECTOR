@@ -46,14 +46,16 @@ allow "Install unknown apps" for your file manager when asked.
 - Save a car, force-close the app, reopen: the car and photo are still there.
 - Edit, delete (photo removed), search, filters, sort.
 - Hardware back button: closes dialogs first, then goes back, then exits from the collection.
-- Airplane mode: everything except Identify works; Identify shows an offline message.
+- Airplane mode: everything works (the app never uses the network).
 - Export a backup to Drive/Files, Clear collection, Import the backup.
 
 ## Permissions
 
 The app requests no runtime permissions. Photos are captured through the system camera app and picked through
-the Android Photo Picker, so no camera or storage permission is needed. `INTERNET` is used only for the optional
-AI service. `android.hardware.camera` is declared optional so tablets without a camera can install the app.
+the Android Photo Picker, so no camera or storage permission is needed. The app makes no network requests;
+`INTERNET` remains in the manifest only because Capacitor's development live-reload needs it (you may remove it
+for release after testing). `android.hardware.camera` is declared optional so tablets without a camera can
+install the app.
 
 ## Release signing
 

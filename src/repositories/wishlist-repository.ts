@@ -136,7 +136,6 @@ export class WishlistRepository {
         series: item.series,
         notes: item.notes,
         imagePath: item.imagePath,
-        nameSource: 'manual',
         ...extra,
       });
       const timestamp = this.now();

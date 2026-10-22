@@ -4,15 +4,6 @@ export type Condition = (typeof CONDITIONS)[number];
 export const PACKAGING_STATUSES = ['carded', 'loose', 'boxed', 'damaged-card', 'opened'] as const;
 export type PackagingStatus = (typeof PACKAGING_STATUSES)[number];
 
-/**
- * How the car's name was obtained.
- * - manual: typed by the user, AI not involved.
- * - ai-confirmed: user accepted the AI suggestion unchanged.
- * - ai-corrected: AI suggested something, user changed it.
- */
-export const NAME_SOURCES = ['manual', 'ai-confirmed', 'ai-corrected'] as const;
-export type NameSource = (typeof NAME_SOURCES)[number];
-
 export const CONDITION_LABELS: Record<Condition, string> = {
   mint: 'Mint',
   'near-mint': 'Near mint',
@@ -28,12 +19,6 @@ export const PACKAGING_LABELS: Record<PackagingStatus, string> = {
   boxed: 'Boxed',
   'damaged-card': 'Damaged card',
   opened: 'Opened',
-};
-
-export const NAME_SOURCE_LABELS: Record<NameSource, string> = {
-  manual: 'Entered manually',
-  'ai-confirmed': 'AI suggestion confirmed',
-  'ai-corrected': 'AI suggestion corrected',
 };
 
 export interface CarRecord {
@@ -53,12 +38,10 @@ export interface CarRecord {
   packaging: PackagingStatus | null;
   /** Price paid, in minor units (cents) of the preferred currency. */
   purchasePriceCents: number | null;
-  /** User-entered estimate in minor units. Never an AI valuation. */
+  /** User-entered estimate in minor units. The app never predicts value. */
   estimatedValueCents: number | null;
   purchaseLocation: string | null;
   notes: string | null;
-  aiSuggestedName: string | null;
-  nameSource: NameSource;
   isWishlisted: boolean;
   /** True only for clearly-labelled demo records that can be removed in Settings. */
   isSample: boolean;

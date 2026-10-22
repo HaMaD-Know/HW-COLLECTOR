@@ -1,5 +1,5 @@
-# Validates every push/PR: typecheck, lint, unit tests, web build, backend
-# typecheck, and an Android debug APK you can download from the run page.
+# Validates every push/PR: typecheck, lint, unit tests, web build, and an
+# Android debug APK you can download from the run page.
 name: CI
 
 on:
@@ -27,15 +27,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            backend/package-lock.json
 
-      - name: Install app dependencies
+      - name: Install dependencies
         run: npm ci
-
-      - name: Install backend dependencies
-        run: npm ci --prefix backend
 
       - name: Typecheck
         run: npm run typecheck
@@ -47,13 +41,7 @@ jobs:
         run: npm test
 
       - name: Production web build
-        env:
-          # Public URL of your identification proxy (repository variable, not a secret).
-          VITE_AI_PROXY_URL: ${{ vars.VITE_AI_PROXY_URL }}
         run: npm run build
-
-      - name: Backend typecheck
-        run: npm run typecheck --prefix backend
 
       - name: Validate Capacitor config
         run: npx cap ls
@@ -81,8 +69,6 @@ jobs:
         run: npm ci
 
       - name: Build web app and sync Android project
-        env:
-          VITE_AI_PROXY_URL: ${{ vars.VITE_AI_PROXY_URL }}
         run: |
           npm run build
           npx cap sync android

@@ -28,8 +28,6 @@ const COLUMNS: Array<[keyof CarRecord, string]> = [
   ['estimatedValueCents', 'estimated_value_cents'],
   ['purchaseLocation', 'purchase_location'],
   ['notes', 'notes'],
-  ['aiSuggestedName', 'ai_suggested_name'],
-  ['nameSource', 'name_source'],
   ['isWishlisted', 'is_wishlisted'],
   ['isSample', 'is_sample'],
 ];
@@ -71,8 +69,6 @@ export function rowToCar(row: Row): CarRecord {
     estimatedValueCents: num(row.estimated_value_cents),
     purchaseLocation: str(row.purchase_location),
     notes: str(row.notes),
-    aiSuggestedName: str(row.ai_suggested_name),
-    nameSource: (str(row.name_source) ?? 'manual') as CarRecord['nameSource'],
     isWishlisted: Number(row.is_wishlisted) === 1,
     isSample: Number(row.is_sample) === 1,
   };

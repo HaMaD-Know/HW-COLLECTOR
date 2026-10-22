@@ -4,7 +4,7 @@ import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar, Style } from '@capacitor/status-bar';
-import { createIdentifier, EventBus, type AppContext } from './app/context';
+import { EventBus, type AppContext } from './app/context';
 import { h } from './components/dom';
 import { closeTopOverlay } from './components/feedback';
 import { buildNavigation } from './components/nav';
@@ -70,11 +70,7 @@ async function boot(): Promise<void> {
     const cars = new CarRepository(db);
     const images = new ImageStore(new CapacitorFileAdapter(), (path) => cars.countImageReferences(path));
     const events = new EventBus();
-    let identifier = createIdentifier(settings.get().aiProxyUrl);
-    events.on('settings-changed', () => {
-      identifier = createIdentifier(settings.get().aiProxyUrl);
-      applyTheme(settings.get().theme);
-    });
+    events.on('settings-changed', () => applyTheme(settings.get().theme));
 
     const router = new Router(outlet, nav.setActive);
     ctx = {
@@ -85,7 +81,6 @@ async function boot(): Promise<void> {
       images,
       settings,
       events,
-      identifier: () => identifier,
       navigate: (path, options) => router.navigate(path, options),
       back: () => router.back(),
     };
