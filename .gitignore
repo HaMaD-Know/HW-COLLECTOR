@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+
+# Builds
+dist/
+backend/dist/
+release/
+coverage/
+*.zip
+
+# Environment and secrets — never commit these
+.env
+.env.*
+!.env.example
+backend/.env
+!backend/.env.example
+*.keystore
+*.jks
+*.p12
+*.p8
+*.mobileprovision
+*.cer
+keystore.properties
+
+# Generated web asset
+public/assets/sql-wasm.wasm
+
+# Android (Capacitor keeps its own android/.gitignore too)
+android/local.properties
+android/.gradle/
+android/app/build/
+android/build/
+android/capacitor-cordova-android-plugins/build/
+
+# iOS
+ios/App/Pods/
+ios/App/build/
+ios/DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+
+# Local Claude Code / editor tooling
+.claude/
